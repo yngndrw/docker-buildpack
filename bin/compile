@@ -21,6 +21,9 @@ export_env_dir ${ENV_DIR}
 
 echo "Building application" | topic
 
+echo "Starting Docker" | indent
+service docker start
+
 echo "Building dockerfile" | indent
 docker build -t app "${BUILD_DIR}"
 
@@ -32,7 +35,7 @@ else
 	if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
 		APP_ROOT=$(echo "$ROOTS" | head -1)
 		cat << EOT >> ${BUILD_DIR}/Procfile
-web: docker run -t -d -p $PORT:5004 app
+web: service docker start | docker run -t -d -p $PORT:5004 app
 EOT
 	fi
 fi
