@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# bin/detect <build-dir>
+
+BUILD_DIR=$1
+
+if [ -n "$( find $BUILD_DIR -maxdepth 1 -iname dockerfile )" ]; then
+	echo "Docker" && exit 0
+else
+	echo "no" && exit 1
+fi

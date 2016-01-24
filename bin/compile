@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+# fail fast
+set -e
+
+if [ $STACK != "cedar-14" ]; then
+	echo "Only cedar-14 stack is supported" && exit 1
+fi
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+# This is where the buildpack is stored
+BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
+
+source $BUILDPACK_DIR/bin/util
+
+export_env_dir ${ENV_DIR}
+
+echo "Building application" | topic
+
+echo "Building dockerfile" | indent
+docker build -t App .
+
+echo "Generating procfile" | indent # Todo -Don't hardcode the internal port (5004) 
+if [ -e ${SRC_DIR}/Procfile ]; then
+	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
+else
+	ROOTS=`cd ${BUILD_DIR}; find approot/packages/ -name root`
+	if [ $( echo "${ROOTS}" | wc -l ) -gt 0 ]; then
+		APP_ROOT=$(echo "$ROOTS" | head -1)
+		cat << EOT >> ${BUILD_DIR}/Procfile
+web: docker run -t -d -p $PORT:5004 App
+EOT
+	fi
+fi
