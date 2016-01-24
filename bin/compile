@@ -15,16 +15,16 @@ ENV_DIR=$3
 # This is where the buildpack is stored
 BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
 
-source $BUILDPACK_DIR/bin/util
+source ${BUILDPACK_DIR}/bin/util
 
 export_env_dir ${ENV_DIR}
 
 echo "Building application" | topic
 
 echo "Building dockerfile" | indent
-docker build -t App .
+docker build -t App ${BUILD_DIR}
 
-echo "Generating procfile" | indent # Todo -Don't hardcode the internal port (5004) 
+echo "Generating procfile" | indent # Todo -Don't hardcode the internal port (5004)
 if [ -e ${SRC_DIR}/Procfile ]; then
 	cp ${SRC_DIR}/Procfile ${BUILD_DIR}
 else
