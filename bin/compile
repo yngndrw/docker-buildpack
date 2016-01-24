@@ -22,7 +22,7 @@ export_env_dir ${ENV_DIR}
 echo "Building application" | topic
 
 echo "Building dockerfile" | indent
-docker build -t App ${BUILD_DIR}
+docker build -t App "${BUILD_DIR}"
 
 echo "Generating procfile" | indent # Todo -Don't hardcode the internal port (5004)
 if [ -e ${SRC_DIR}/Procfile ]; then
